@@ -1,0 +1,73 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"  # 仅在推送 `vX.X.X` 形式的标签时触发
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Build Executable (Linux)
+        if: runner.os == 'Linux'
+        run: cargo build --release
+
+      - name: Build Executable (Windows)
+        if: runner.os == 'Windows'
+        run: cargo build --release
+
+      - name: Package Executable (Linux)
+        if: runner.os == 'Linux'
+        run: zip -r executable-linux.zip target/release/*
+
+      - name: Package Executable (Windows)
+        if: runner.os == 'Windows'
+        run: Compress-Archive -Path target/release/* -DestinationPath executable-windows.zip
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: executable-${{ runner.os }}
+          path: |
+            executable-*.zip
+
+  release:
+    name: Create GitHub Release
+    needs: build  # 依赖 build 任务，确保构建完成后执行
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Display Downloaded Files
+        run: ls -R artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: "Automated release for ${{ github.ref_name }}"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
