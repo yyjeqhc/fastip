@@ -1,0 +1,25 @@
+cargo-features = ["edition2024"]
+[package]
+name = "fastip"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+surge-ping = "0.8.1"
+tokio = { version = "1", features = ["full"] }
+futures = "0.3.25"
+parking_lot = "0.12.1"
+pnet_packet = "0.34"
+rand = "0.8.5"
+socket2 = { version = "0.5.6", features = ["all"] }
+thiserror = "1.0.57"
+tracing = "0.1.40"
+trust-dns-resolver = "0.23.2"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+clap = { version = "4.0", features = ["derive"] }
+hex = "0.4.3"
+pinger = "2.0.0"
+serde_json = "1.0"
+toml = "0.5"

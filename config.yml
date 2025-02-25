@@ -1,0 +1,19 @@
+dns_servers:
+  - address: "8.8.8.8"
+    port: 53
+    protocol: udp
+  - address: "218.30.118.6"
+    protocol: udp
+  - address: "119.29.29.29"
+    port: 53
+    protocol: udp
+
+domains:
+  - name: "yyjeqhc.cn"
+    record_type: A
+    enabled: true
+  - name: "6.ipw.cn"
+    record_type: AAAA
+  - name: "data.bilibili.com"
+    record_type: TOTAL
+    enabled: true
